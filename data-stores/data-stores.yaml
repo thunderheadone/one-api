@@ -1,0 +1,340 @@
+---
+swagger: "2.0"
+info:
+  description: "Datastore API"
+  version: "1.0.0"
+  title: "Datastore API"
+host: "virtserver.swaggerhub.com"
+basePath: "/Thunderhead/DataSets/1.0.0"
+tags:
+- name: "datastore"
+  description: "DataStore API"
+schemes:
+- "https"
+paths:
+  /datastores/1.0.0/{workspaceId}:
+    get:
+      tags:
+      - "datastore"
+      description: "List datastores that are within workspace"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Provide the workspace ID for your Space. This can be found in\
+          \ the Welcome URL after you have signed into ONE and selected your Space\
+          \ I.e. MTIyMg"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successfully get list of datastores in Space"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/DataStore"
+        404:
+          description: "Invalid workspace id"
+        400:
+          description: "OAuth 2.0 token has expired"
+    post:
+      tags:
+      - "datastore"
+      description: "Create datastore in your Space"
+      operationId: "createDatastore"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Provide the workspace ID for your Space. This can be found in\
+          \ the Welcome URL after you have signed into ONE and selected your Space\
+          \ I.e. MTIyMg"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successfully created datastore"
+          schema:
+            $ref: "#/definitions/DataStore"
+        404:
+          description: "Invalid workspace id/Invalid Key type"
+        400:
+          description: "OAuth 2.0 token has expired"
+  /datastores/1.0.0/{workspaceId}/{datastoreName}:
+    get:
+      tags:
+      - "datastore"
+      description: "Gets information about specified datastore"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Workspace Id"
+        required: true
+        type: "string"
+      - name: "datastoreName"
+        in: "path"
+        description: "Datastore Name"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Returns details about the datastore"
+          schema:
+            $ref: "#/definitions/DataStore"
+    delete:
+      tags:
+      - "datastore"
+      description: "Used to delete a datastore"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Workspace Id"
+        required: true
+        type: "string"
+      - name: "datastoreName"
+        in: "path"
+        description: "Datastore Name"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successfully deleted datastore"
+        404:
+          description: "Datastore doesn't exist"
+  /datastores/1.0.0/{workspaceId}/{dataStoreAPIName}/golive:
+    post:
+      tags:
+      - "datastore"
+      description: "Go live with staging datastore"
+      operationId: "goLive"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Workspace Id"
+        required: true
+        type: "string"
+      - name: "dataStoreAPIName"
+        in: "path"
+        description: "DataStore Name"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successfully make staging to live"
+        404:
+          description: "DataStore doesn't exist"
+  /datastores/1.0.0/{workspaceId}/{datastoreName}/{target}:
+    get:
+      tags:
+      - "datastore"
+      description: "Query datastore"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Workspace Id"
+        required: true
+        type: "string"
+      - name: "datastoreName"
+        in: "path"
+        description: "Datastore Name"
+        required: true
+        type: "string"
+      - name: "target"
+        in: "path"
+        description: "Target (live or staging)"
+        required: true
+        type: "string"
+      - name: "pk"
+        in: "query"
+        description: "Primary Key"
+        required: true
+        type: "string"
+      - name: "sk"
+        in: "query"
+        description: "Secondary key"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Returns results for primary key and optionally secondary key"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties: {}
+          examples:
+            One:
+            - custId: "0"
+              OfferName: "offer1"
+    post:
+      tags:
+      - "datastore"
+      description: "Insert data into datastore"
+      operationId: "insertDatastoreData"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Workspace Id"
+        required: true
+        type: "string"
+      - name: "datastoreName"
+        in: "path"
+        description: "Datastore Name"
+        required: true
+        type: "string"
+      - name: "target"
+        in: "path"
+        description: "Target (live or staging)"
+        required: true
+        type: "string"
+      - name: "pk"
+        in: "query"
+        description: "Primary Key"
+        required: true
+        type: "string"
+      - name: "sk"
+        in: "query"
+        description: "Secondary key"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "insertDatastoreDataRequest"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/UserDefinedObject"
+      responses:
+        200:
+          description: "Successfully inserted data into datastore"
+        404:
+          description: "Invalid workspace id or Invalid Key type or Invalid Environment"
+        400:
+          description: "OAuth 2.0 token has expired"
+    delete:
+      tags:
+      - "datastore"
+      description: "Delete record from datastore"
+      parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Bearer <token>"
+        required: true
+        type: "string"
+      - name: "workspaceId"
+        in: "path"
+        description: "Workspace Id"
+        required: true
+        type: "string"
+      - name: "datastoreName"
+        in: "path"
+        description: "Datastore Name"
+        required: true
+        type: "string"
+      - name: "target"
+        in: "path"
+        description: "Target (live or staging)"
+        required: true
+        type: "string"
+      - name: "pk"
+        in: "query"
+        description: "Primary Key"
+        required: true
+        type: "string"
+      - name: "sk"
+        in: "query"
+        description: "Secondary key"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Successfully deleted record from datastore"
+        404:
+          description: "Invalid workspace id or Invalid Key type or Invalid Environment"
+        400:
+          description: "OAuth 2.0 token has expired"
+definitions:
+  DataStore:
+    type: "object"
+    required:
+    - "apiName"
+    - "created"
+    - "definitions"
+    - "lastModified"
+    - "name"
+    - "primaryKey"
+    properties:
+      name:
+        type: "string"
+      apiName:
+        type: "string"
+      created:
+        type: "integer"
+        readOnly: true
+      lastModified:
+        type: "integer"
+        readOnly: true
+      primaryKey:
+        type: "string"
+      secondaryKey:
+        type: "string"
+      definitions:
+        type: "array"
+        items:
+          $ref: "#/definitions/Definition"
+  Definition:
+    required:
+    - "name"
+    - "type"
+    properties:
+      name:
+        type: "string"
+      type:
+        type: "string"
+  UserDefinedObject:
+    type: "object"
