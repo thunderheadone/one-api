@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  description: "Datastore API Test"
+  description: "Datastore API"
   version: "1.0.0"
   title: "Datastore API"
 host: "virtserver.swaggerhub.com"
