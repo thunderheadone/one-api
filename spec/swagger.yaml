@@ -248,9 +248,6 @@ parameters:
     type: string
     required: true
     description: The ONE Site Key for your Space, for example ONE-JY0AMQJQHQ-1290
-# Added by API Auto Mocking Plugin
-# host: oneqadev.thunderhead.com
-# basePath: /one/rt/api/3.0.0
 schemes:
  - https
 # Added by API Auto Mocking Plugin
