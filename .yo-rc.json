@@ -1,6 +1,7 @@
 {
   "generator-openapi-repo": {
-    "importExistingSpec": false,
+  	"importExistingSpec": true,
+    "importedSpec": "../spec/swagger.yaml",
     "name": "Thunderhead ONE",
     "repo": "thunderheadone/one-api",
     "splitSpec": false,
