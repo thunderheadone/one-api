@@ -248,8 +248,18 @@ parameters:
     type: string
     required: true
     description: The ONE Site Key for your Space, for example ONE-JY0AMQJQHQ-1290
+# host: <servername>.thunderhead.com
+# basePath: /
 schemes:
- - https
+  - https
+security:
+  - OAuth2: []
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: 'https://<servername>.thunderhead.com/one/oauth2token'
+    scopes: {}
 # Added by API Auto Mocking Plugin
 host: eu2.thunderhead.com
 basePath: /one/oauth2/rt/api/3.0.0
