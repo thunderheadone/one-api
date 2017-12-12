@@ -3,15 +3,18 @@ info:
   description: |
     The ONE API supports:
     * Sending customer activity and data gathered at your Touchpoints, without an interaction context.
-  version: "3.0.0"
+    * Requesting structured customer data from ONE.
+    * Deleting customer information from ONE.
+  version: "3.1.0"
   title: ONE-API
   x-logo:
     url: 'https://www.thunderhead.com/uploads/2015/07/Thunderhead_LogoIcon_Aubergine.png'
 
+
 tags:
 - name: ONE Customer
   description: |
-        Use the customer endpoint to update your customers profile in ONE.
+        Use the customer endpoint to update your customers profile in ONE and request structured customer data from ONE.
 paths:
   /customer/{sk}/activity:
     post:
@@ -32,13 +35,81 @@ paths:
           $ref: '#/definitions/ActivityRequest'
       responses:
         200:
-          description: Request successful
+          description: Request successfulHandler
           schema:
             $ref: '#/definitions/ActivityResponse'
         400:
           description: Bad input parameter
           schema:
             $ref: '#/definitions/ApiError'
+        401:
+          description: Invalid OAuth 2.0 token
+  /customer/{sk}/structure:
+    post:
+      tags:
+      - ONE Customer
+      summary: Evaluate a structure for an existing customer.
+      operationId: evaluateStructure
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/Sitekey'
+      - name: structureRequest
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/StructureRequest'
+      responses:
+        200:
+          description: Request successful
+          schema:
+            $ref: '#/definitions/StructureResponse'
+        400:
+          description: Bad input parameter
+          schema:
+            $ref: '#/definitions/StructureError'
+        401:
+          description: Invalid OAuth 2.0 token
+        404:
+          description: Structure not found
+          schema:
+            $ref: '#/definitions/StructureError'
+  /customer/{sk}:
+    delete:
+      tags:
+      - ONE Customer
+      summary: Delete all data in ONE for an existing customer.
+      operationId: delete
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/Sitekey'
+      - name: deleteRequest
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteRequest'
+      responses:
+        200:
+          description: Customer data deleted
+          schema:
+            $ref: '#/definitions/DeleteResponse'
+        401:
+          description: Invalid OAuth 2.0 token
+        403:
+          description: User lacks permissions to perform operation
+        404:
+          description: Specified customer not found
+          schema:
+            $ref: '#/definitions/DeleteError'
+        400:
+          description: Bad input parameter
+          schema:
+            $ref: '#/definitions/DeleteError'
 definitions:
   ErrorCode:
     description: Machine parsable error code
@@ -48,6 +119,8 @@ definitions:
     - INVALID_ACTIVITY_TYPE_CODE
     - INVALID_DATE_TIME
     - INVALID_API_NAME
+    - INVALID_SITEKEY
+    - CUSTOMER_NOT_FOUND
     - GENERAL
   ApiError:
     type: object
@@ -66,6 +139,46 @@ definitions:
       - properties:
           activity:
             $ref: '#/definitions/Activity'
+  StructureError:
+    description: Structure error
+    type: object
+    allOf:
+      - $ref: '#/definitions/ApiError'
+      - properties:
+          structureApiName:
+            type: string
+            description: The apiName of the requested structure
+  DeleteError:
+    description: Delete customer error.
+    type: object
+    allOf:
+      - $ref: '#/definitions/ApiError'
+  StructureRequest:
+    type: object
+    properties:
+      customerContext:
+        $ref: '#/definitions/CustomerContext'
+      structureApiName:
+        type: string
+        description: The apiName of the structure to evaluate
+  StructureResponse:
+    type: object
+    properties:
+      structureApiName:
+        type: string
+        description: The apiName of the structure to evaluate
+      tid:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      structure:
+        $ref: '#/definitions/Structure'
+      error:
+        $ref: '#/definitions/StructureError'
+  Structure:
+    type: object
+    additionalProperties:
+      type: object
   Activity:
     type: object
     description: Customer activity
@@ -241,6 +354,32 @@ definitions:
         value:
           type: string
           example: summeroffer2017
+  DeleteRequest:
+    type: object
+    description: Customer to delete.  Specifiy a TID or Identifier.
+    properties:
+      tid:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      identifier:
+        $ref: '#/definitions/Identifier'
+  DeleteResponse:
+    type: object
+    description: Customer delete response.
+    properties:
+      tids:
+        description: List of tids associated with the customer.
+        type: array
+        items:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      identifiers:
+        description: List of Identifiers associated with the customer.
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
 parameters:
   Sitekey:
     name: sk
@@ -248,8 +387,7 @@ parameters:
     type: string
     required: true
     description: The ONE Site Key for your Space, for example ONE-JY0AMQJQHQ-1290
-# host: <servername>.thunderhead.com
-# basePath: /
+
 schemes:
   - https
 security:
@@ -261,5 +399,5 @@ securityDefinitions:
     tokenUrl: 'https://<servername>.thunderhead.com/one/oauth2token'
     scopes: {}
 # Added by API Auto Mocking Plugin
-host: eu2.thunderhead.com
-basePath: /one/oauth2/rt/api/3.0.0
+host: <servername>.thunderhead.com
+basePath: /one/oauth2/rt/api/3.1.0
