@@ -396,7 +396,7 @@ securityDefinitions:
   OAuth2:
     type: oauth2
     flow: application
-    tokenUrl: 'https://<servername>.thunderhead.com/one/oauth2token'
+    tokenUrl: 'https://eu2.thunderhead.com/one/oauth2token'
     scopes: {}
 # Added by API Auto Mocking Plugin
 host: <servername>.thunderhead.com
