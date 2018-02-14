@@ -27,4 +27,4 @@
 4. All changes are immediately propagated to your local server, moreover all documentation pages will be automagically refreshed in a browser after each change
 **TIP:** you can open `swagger-editor`, documentation and `swagger-ui` in parallel
 5. Once you finish with the changes you can run tests using: `npm test`
-6. Share you changes with the rest of the world by pushing to GitHub :smile:
+6. Share your changes with the rest of the world by pushing to GitHub :smile:
