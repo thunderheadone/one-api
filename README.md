@@ -28,3 +28,7 @@
 **TIP:** you can open `swagger-editor`, documentation and `swagger-ui` in parallel
 5. Once you finish with the changes you can run tests using: `npm test`
 6. Share your changes with the rest of the world by pushing to GitHub :smile:
+
+## Questions or need help
+
+_The Thunderhead ONE team is available 24/7 to answer any questions you have. Just email onesupport@thunderhead.com or visit our docs page for more detailed installation and usage information._
