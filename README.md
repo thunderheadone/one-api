@@ -1,5 +1,5 @@
 # Thunderhead ONE OpenAPI Specification
-[![Build Status](https://travis-ci.org/thunderheadone/one-api.svg?branch=master)](https://travis-ci.org/thunderheadone/one-api)
+[![Build Status](https://travis-ci.com/thunderheadone/one-api.svg?branch=master)](https://travis-ci.com/thunderheadone/one-api)
 
 ## Links
 
