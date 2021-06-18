@@ -80,6 +80,7 @@ paths:
       tags:
       - ONE Customer
       summary: Delete all data for an existing customer.
+      description: If you are referencing customer data from a datastore, you must also delete the data held for a customer within that datastore using the [Datastores API](https://thunderheadone.github.io/datastores-api/).
       operationId: delete
       consumes:
       - application/json
