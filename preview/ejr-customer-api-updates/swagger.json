@@ -1,0 +1,573 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This API supports:\n* Sending customer activity and data gathered at your Touchpoints, without an Interaction Point context.\n* Requesting structured customer data.\n* Deleting customer information.\n",
+    "version": "3.1.0",
+    "title": "ONE-API",
+    "x-logo": {
+      "url": "https://www.thunderhead.com/uploads/2015/07/Thunderhead_LogoIcon_Aubergine.png"
+    }
+  },
+  "tags": [
+    {
+      "name": "ONE Customer",
+      "description": "Use the customer endpoint to update a customer's profile, request structured customer data, or delete customer data.\n"
+    }
+  ],
+  "paths": {
+    "/customer/{sk}/activity": {
+      "post": {
+        "tags": [
+          "ONE Customer"
+        ],
+        "summary": "Send customer activity for a new or existing customer.",
+        "operationId": "sendActivity",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/Sitekey"
+          },
+          {
+            "name": "activityRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ActivityRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request successfulHandler",
+            "schema": {
+              "$ref": "#/definitions/ActivityResponse"
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          },
+          "401": {
+            "description": "Invalid OAuth 2.0 token"
+          }
+        }
+      }
+    },
+    "/customer/{sk}/structure": {
+      "post": {
+        "tags": [
+          "ONE Customer"
+        ],
+        "summary": "Evaluate a Data Structure for an existing customer.",
+        "operationId": "evaluateStructure",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/Sitekey"
+          },
+          {
+            "name": "structureRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StructureRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "schema": {
+              "$ref": "#/definitions/StructureResponse"
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "schema": {
+              "$ref": "#/definitions/StructureError"
+            }
+          },
+          "401": {
+            "description": "Invalid OAuth 2.0 token"
+          },
+          "404": {
+            "description": "Structure not found",
+            "schema": {
+              "$ref": "#/definitions/StructureError"
+            }
+          }
+        }
+      }
+    },
+    "/customer/{sk}": {
+      "delete": {
+        "tags": [
+          "ONE Customer"
+        ],
+        "summary": "Delete all data for an existing customer.",
+        "operationId": "delete",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/Sitekey"
+          },
+          {
+            "name": "deleteRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer data deleted",
+            "schema": {
+              "$ref": "#/definitions/DeleteResponse"
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "schema": {
+              "$ref": "#/definitions/DeleteError"
+            }
+          },
+          "401": {
+            "description": "Invalid OAuth 2.0 token"
+          },
+          "403": {
+            "description": "User lacks permissions to perform operation"
+          },
+          "404": {
+            "description": "Specified customer not found",
+            "schema": {
+              "$ref": "#/definitions/DeleteError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ErrorCode": {
+      "description": "Machine parsable error code",
+      "type": "string",
+      "enum": [
+        "INVALID_PROPOSITION_CODE",
+        "INVALID_ACTIVITY_TYPE_CODE",
+        "INVALID_DATE_TIME",
+        "INVALID_API_NAME",
+        "INVALID_SITEKEY",
+        "CUSTOMER_NOT_FOUND",
+        "GENERAL"
+      ]
+    },
+    "ApiError": {
+      "type": "object",
+      "properties": {
+        "errorCode": {
+          "$ref": "#/definitions/ErrorCode"
+        },
+        "errorMessage": {
+          "description": "Human readable error description",
+          "type": "string",
+          "example": "The specified proposition code does not exist"
+        }
+      }
+    },
+    "ActivityError": {
+      "description": "Activity error",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ApiError"
+        },
+        {
+          "properties": {
+            "activity": {
+              "$ref": "#/definitions/Activity"
+            }
+          }
+        }
+      ]
+    },
+    "StructureError": {
+      "description": "Structure error",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ApiError"
+        },
+        {
+          "properties": {
+            "structureApiName": {
+              "type": "string",
+              "description": "The API name of the requested Data Structure"
+            }
+          }
+        }
+      ]
+    },
+    "DeleteError": {
+      "description": "Delete customer error.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ApiError"
+        }
+      ]
+    },
+    "StructureRequest": {
+      "type": "object",
+      "properties": {
+        "customerContext": {
+          "$ref": "#/definitions/CustomerContext"
+        },
+        "structureApiName": {
+          "type": "string",
+          "description": "The API name of the Data Structure to evaluate"
+        }
+      }
+    },
+    "StructureResponse": {
+      "type": "object",
+      "properties": {
+        "structureApiName": {
+          "type": "string",
+          "description": "The API name of the Data Structure to evaluate"
+        },
+        "tid": {
+          "type": "string",
+          "format": "uuid",
+          "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+        },
+        "structure": {
+          "$ref": "#/definitions/Structure"
+        },
+        "error": {
+          "$ref": "#/definitions/StructureError"
+        }
+      }
+    },
+    "Structure": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "Activity": {
+      "type": "object",
+      "description": "Customer activity",
+      "required": [
+        "propositionCode",
+        "activityTypeCode"
+      ],
+      "properties": {
+        "propositionCode": {
+          "type": "string",
+          "description": "The Proposition code to use for tracking customer activity.",
+          "format": "propositionCode",
+          "example": "bluecard"
+        },
+        "dynamicPropositionCode": {
+          "type": "string",
+          "description": "The dynamic Proposition code to use for tracking customer activity. Customer activity for dynamic propositions can only be tracked using the API.",
+          "format": "dynamicPropositionCode",
+          "example": "summeroffer"
+        },
+        "activityTypeCode": {
+          "type": "string",
+          "description": "The Activity Type code to use for tracking customer activity.",
+          "format": "activityTypeCode",
+          "example": "detailview"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Date-time that the customer activity occurred. Future dates are not supported. If no date is specified, the date will be stored as the current date.",
+          "format": "date-time"
+        }
+      }
+    },
+    "CustomerContext": {
+      "type": "object",
+      "description": "Common customer attributes",
+      "required": [
+        "baseTouchpointUri"
+      ],
+      "properties": {
+        "tid": {
+          "type": "string",
+          "format": "uuid",
+          "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+        },
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Identifier"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Property"
+          }
+        },
+        "device": {
+          "$ref": "#/definitions/Device"
+        },
+        "baseTouchpointUri": {
+          "type": "string",
+          "description": "The Touchpoint URI for tracking customer activity. Interaction Point context is not required and will be ignored.",
+          "example": "http://www.customerfirst.com"
+        }
+      }
+    },
+    "ActivityRequest": {
+      "type": "object",
+      "description": "Activities to process in the given CustomerContext.",
+      "required": [
+        "customerContext",
+        "activities"
+      ],
+      "properties": {
+        "customerContext": {
+          "$ref": "#/definitions/CustomerContext"
+        },
+        "activities": {
+          "description": "Customer activities",
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/definitions/Activity"
+          }
+        }
+      }
+    },
+    "ActivityResponse": {
+      "type": "object",
+      "required": [
+        "tid",
+        "errors"
+      ],
+      "description": "Activity response will return the TID of the customer for which the data was processed and any errors while processing activities.",
+      "properties": {
+        "tid": {
+          "type": "string",
+          "format": "uuid",
+          "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActivityError"
+          }
+        }
+      }
+    },
+    "Device": {
+      "type": "object",
+      "description": "The device to be used as the customer's current device.",
+      "required": [
+        "appName",
+        "devType",
+        "osName"
+      ],
+      "properties": {
+        "appName": {
+          "type": "string",
+          "example": "CustomerFirst"
+        },
+        "appVer": {
+          "type": "string",
+          "example": "1.0.2"
+        },
+        "devMfr": {
+          "type": "string",
+          "example": "Apple"
+        },
+        "devModel": {
+          "type": "string",
+          "example": "iPhone8"
+        },
+        "devType": {
+          "type": "string",
+          "enum": [
+            "GAME_CONSOLE",
+            "PDA",
+            "PERSONAL_COMPUTER",
+            "SMART_TV",
+            "SMARTPHONE",
+            "TABLET",
+            "WEARABLE",
+            "OTHER"
+          ],
+          "default": "OTHER",
+          "example": "SMARTPHONE"
+        },
+        "osName": {
+          "type": "string",
+          "enum": [
+            "ANDROID",
+            "WINDOWS",
+            "IOS",
+            "OSX",
+            "LINUX",
+            "OTHER"
+          ],
+          "default": "OTHER",
+          "example": "IOS"
+        },
+        "osVer": {
+          "type": "string",
+          "example": "10.3.3"
+        },
+        "locLatitude": {
+          "type": "number",
+          "example": 61.4
+        },
+        "locLongitude": {
+          "type": "number",
+          "example": 32.7
+        },
+        "locLastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2017-08-24T19:57:34.479-04:00"
+        },
+        "locHorzAccuracy": {
+          "type": "number",
+          "example": 1
+        },
+        "ipAddress": {
+          "type": "string",
+          "example": "127.0.0.1"
+        },
+        "locale": {
+          "type": "string",
+          "example": "en-US"
+        },
+        "pushToken": {
+          "type": "string",
+          "example": "3220f35e-6255-3701-92a6-d401448e0145"
+        }
+      }
+    },
+    "Identifier": {
+      "type": "object",
+      "description": "A unique identifier for your customer. Use the API name of the customer attribute to set the customer ID.",
+      "required": [
+        "apiName",
+        "value"
+      ],
+      "properties": {
+        "apiName": {
+          "type": "string",
+          "example": "email"
+        },
+        "value": {
+          "type": "string",
+          "example": "customer@thunderhead.com"
+        }
+      }
+    },
+    "Property": {
+      "type": "object",
+      "description": "Send attribute name/value pairs to add customer context at your Touchpoint.",
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "campaigncode"
+        },
+        "value": {
+          "type": "string",
+          "example": "summeroffer2017"
+        }
+      }
+    },
+    "DeleteRequest": {
+      "type": "object",
+      "description": "Customer to delete.  Specify a TID or Identifier.",
+      "properties": {
+        "tid": {
+          "type": "string",
+          "format": "uuid",
+          "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+        },
+        "identifier": {
+          "$ref": "#/definitions/Identifier"
+        }
+      }
+    },
+    "DeleteResponse": {
+      "type": "object",
+      "description": "Customer delete response.",
+      "properties": {
+        "tids": {
+          "description": "List of TIDs associated with the customer.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          }
+        },
+        "identifiers": {
+          "description": "List of Identifiers associated with the customer.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Identifier"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "Sitekey": {
+      "name": "sk",
+      "in": "path",
+      "type": "string",
+      "required": true,
+      "description": "The ONE Site Key for your Space, for example ONE-JY0AMQJQHQ-1290"
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "security": [
+    {
+      "OAuth2": []
+    }
+  ],
+  "securityDefinitions": {
+    "OAuth2": {
+      "type": "oauth2",
+      "flow": "application",
+      "tokenUrl": "https://eu2.thunderhead.com/one/oauth2token",
+      "scopes": {}
+    }
+  },
+  "host": "eu2.thunderhead.com",
+  "basePath": "/one/oauth2/rt/api/3.1.0"
+}
